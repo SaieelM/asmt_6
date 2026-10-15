@@ -5,9 +5,10 @@ services:
   # GCP Internal IP: 10.128.0.5
   # ====================================================================
   gateway:
-    build: .
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
     container_name: vm1_gateway
-    command: ["node", "gateway/src/server.js"]
     ports:
       - "3000:3000"
     environment:
@@ -38,9 +39,10 @@ services:
   # GCP Internal IP: 10.128.0.6
   # ====================================================================
   product-service:
-    build: .
+    build:
+      context: .
+      dockerfile: product-service/Dockerfile
     container_name: vm2_product_service
-    command: ["node", "product-service/src/server.js"]
     expose:
       - "4001"
     environment:
@@ -62,9 +64,10 @@ services:
   # GCP Internal IP: 10.128.0.7
   # ====================================================================
   order-service:
-    build: .
+    build:
+      context: .
+      dockerfile: order-service/Dockerfile
     container_name: vm3_order_service
-    command: ["node", "order-service/src/server.js"]
     expose:
       - "4002"
     environment:
@@ -86,9 +89,10 @@ services:
   # GCP Internal IP: 10.128.0.8
   # ====================================================================
   inventory-service:
-    build: .
+    build:
+      context: .
+      dockerfile: inventory-service/Dockerfile
     container_name: vm4_inventory_service
-    command: ["node", "inventory-service/src/server.js"]
     expose:
       - "4003"
     environment:
