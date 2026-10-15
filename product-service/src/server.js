@@ -10,8 +10,8 @@ const VM_NAME = process.env.VM_NAME || 'vm2-product-service';
 const PRIVATE_IP = process.env.PRIVATE_IP || '10.128.0.6';
 
 // Peer VM endpoints for sync broadcast (GCP internal IPs: 10.128.0.7 & 10.128.0.8)
-const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || (process.env.NODE_ENV === 'production' ? 'http://10.128.0.7:4002' : 'http://localhost:4002');
-const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || (process.env.NODE_ENV === 'production' ? 'http://10.128.0.8:4003' : 'http://localhost:4003');
+const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://10.128.0.7:4002';
+const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || 'http://10.128.0.8:4003';
 
 app.use(cors());
 app.use(express.json());

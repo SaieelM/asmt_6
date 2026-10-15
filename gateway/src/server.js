@@ -10,10 +10,10 @@ const VM_NAME = process.env.VM_NAME || 'vm1-gateway (Public Gateway)';
 const PUBLIC_IP = process.env.PUBLIC_IP || 'External IP';
 const PRIVATE_IP = process.env.PRIVATE_IP || '10.128.0.5';
 
-// Configurable Private VM URLs (Defaults to User's GCP internal IPs, or localhost for local testing)
-const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || (process.env.NODE_ENV === 'production' ? 'http://10.128.0.6:4001' : 'http://localhost:4001');
-const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || (process.env.NODE_ENV === 'production' ? 'http://10.128.0.7:4002' : 'http://localhost:4002');
-const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || (process.env.NODE_ENV === 'production' ? 'http://10.128.0.8:4003' : 'http://localhost:4003');
+// Configurable Private VM URLs (Defaults to User's GCP internal IPs)
+const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://10.128.0.6:4001';
+const ORDER_SERVICE_URL = process.env.ORDER_SERVICE_URL || 'http://10.128.0.7:4002';
+const INVENTORY_SERVICE_URL = process.env.INVENTORY_SERVICE_URL || 'http://10.128.0.8:4003';
 
 app.use(cors());
 app.use(express.json());
