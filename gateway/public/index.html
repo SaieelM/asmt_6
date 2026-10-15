@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuantumStore • Distributed Cloud E-Commerce Microservices</title>
+  <meta name="description" content="A distributed 4-microservices e-commerce application with isolated private VMs and cross-database synchronization.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation Header -->
+  <header class="main-header" id="main-header">
+    <div class="header-container">
+      <div class="brand-group" id="brand-logo" onclick="switchTab('storefront')">
+        <div class="logo-orb">
+          <svg viewBox="0 0 24 24" fill="none" class="orb-icon">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1"/>
+                <stop offset="1" stop-color="#10b981"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Quantum<span class="gradient-text">Store</span></span>
+          <span class="brand-subtitle">Cloud Microservices Engine</span>
+        </div>
+      </div>
+
+      <!-- Cloud Status Pill -->
+      <div class="cloud-status-pill" id="cloud-status-pill" title="Public VM 1 Gateway active. Backend microservices secured in private subnet.">
+        <span class="pulse-dot"></span>
+        <span class="status-label">VM-1 Gateway: <span class="highlight-text">Public (0.0.0.0/0)</span></span>
+        <span class="status-divider">•</span>
+        <span class="status-services" id="header-services-count">3 Private VMs Synced</span>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-links" id="main-nav">
+        <button class="nav-item active" id="nav-storefront" onclick="switchTab('storefront')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span>Storefront</span>
+        </button>
+        <button class="nav-item" id="nav-orders" onclick="switchTab('orders')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="m9 14 2 2 4-4"/>
+          </svg>
+          <span>Orders</span>
+          <span class="badge-counter" id="orders-count-badge">0</span>
+        </button>
+        <button class="nav-item" id="nav-warehouse" onclick="switchTab('warehouse')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+          <span>Warehouse</span>
+        </button>
+        <button class="nav-item topology-nav" id="nav-topology" onclick="switchTab('topology')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="6" height="6" rx="1"/><rect x="16" y="2" width="6" height="6" rx="1"/>
+            <rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/>
+            <path d="M5 8v8M19 8v8M8 5h8M8 19h8"/>
+          </svg>
+          <span>Cloud Topology & DB Sync</span>
+          <span class="live-pill">LIVE</span>
+        </button>
+      </nav>
+
+      <!-- Cart Button -->
+      <button class="cart-trigger-btn" id="open-cart-btn" onclick="toggleCartModal(true)">
+        <div class="cart-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          <span class="cart-count-badge" id="cart-item-count">0</span>
+        </div>
+        <span class="cart-btn-text" id="cart-total-preview">$0.00</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="app-main" id="app-main">
+    
+    <!-- ============================================== -->
+    <!-- VIEW 1: STOREFRONT & PRODUCTS CATALOG -->
+    <!-- ============================================== -->
+    <section class="view-section active" id="view-storefront">
+      <!-- Architecture Alert Callout -->
+      <div class="architecture-callout-card" id="hero-banner">
+        <div class="callout-grid">
+          <div class="callout-content">
+            <div class="callout-badge">
+              <span class="status-indicator"></span>
+              Distributed Microservices • Assignment 6 Implementation
+            </div>
+            <h1 class="callout-title">
+              Autonomous Cloud E-Commerce <br>
+              <span class="gradient-text">4 Isolated VMs & Synchronized Databases</span>
+            </h1>
+            <p class="callout-desc">
+              All client interactions pass through <strong>VM-1 (Public API Gateway)</strong>. Backend services (Product Catalog, Order Processing, and Warehouse Inventory) operate inside protected private subnets on separate VMs. When an order is placed, a cross-database event protocol synchronizes <code>orders.db</code>, <code>inventory.db</code>, and <code>products.db</code> in real-time.
+            </p>
+            <div class="callout-actions">
+              <button class="btn-primary" id="btn-inspect-topology" onclick="switchTab('topology')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                  <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+                </svg>
+                Inspect 4-VM Topology & DB Sync
+              </button>
+              <button class="btn-secondary" id="btn-demo-order" onclick="triggerQuickOrderDemo()">
+                ⚡ One-Click Cross-DB Sync Demo
+              </button>
+            </div>
+          </div>
+          <div class="callout-mini-stats">
+            <div class="stat-box">
+              <span class="stat-number" id="stat-nodes-count">4 / 4</span>
+              <span class="stat-label">VMs Online</span>
+              <span class="stat-sub">1 Public • 3 Private</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-number" id="stat-sync-count">0</span>
+              <span class="stat-label">DB Sync Events</span>
+              <span class="stat-sub">Across All Databases</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-number" id="stat-isolation-status">SECURE</span>
+              <span class="stat-label">Firewall Isolation</span>
+              <span class="stat-sub">Private Subnets Sealed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Catalog Controls -->
+      <div class="catalog-header-bar">
+        <div class="category-pills" id="category-pills">
+          <button class="cat-pill active" onclick="filterCategory('All')">All Items</button>
+          <button class="cat-pill" onclick="filterCategory('Workstations')">Workstations</button>
+          <button class="cat-pill" onclick="filterCategory('Audio')">Audio</button>
+          <button class="cat-pill" onclick="filterCategory('Displays')">Displays</button>
+          <button class="cat-pill" onclick="filterCategory('Peripherals')">Peripherals</button>
+          <button class="cat-pill" onclick="filterCategory('Wearables')">Wearables</button>
+        </div>
+        <div class="catalog-meta">
+          <span class="stock-sync-indicator" id="stock-sync-indicator">
+            <span class="live-dot"></span> Live Stock Synced from <code>products.db</code> (VM-2)
+          </span>
+          <button class="btn-icon-refresh" id="refresh-products-btn" onclick="loadProducts()" title="Refresh Catalog">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" id="products-grid">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Connecting to VM-1 Gateway and querying VM-2 Product Catalog Database...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: ORDERS HISTORY -->
+    <!-- ============================================== -->
+    <section class="view-section" id="view-orders">
+      <div class="section-heading-row">
+        <div>
+          <h2 class="section-title">Customer Order Ledger</h2>
+          <p class="section-desc">Queried from <code>orders.db</code> hosted on <strong>vm3-order-service (Private Subnet: 10.128.0.7)</strong> via API Gateway.</p>
+        </div>
+        <button class="btn-secondary" id="refresh-orders-btn" onclick="loadOrders()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+            <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          Refresh Orders
+        </button>
+      </div>
+
+      <div class="orders-table-wrapper card-glass">
+        <div id="orders-list-container">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Fetching orders from VM-3 Order Service...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 3: WAREHOUSE & INVENTORY -->
+    <!-- ============================================== -->
+    <section class="view-section" id="view-warehouse">
+      <div class="section-heading-row">
+        <div>
+          <h2 class="section-title">Warehouse Inventory & Stock Ledger</h2>
+          <p class="section-desc">Managed by <code>inventory.db</code> on <strong>vm4-inventory-service (Private Subnet: 10.128.0.8)</strong>. Restocks synchronize with Product DB.</p>
+        </div>
+        <div class="heading-actions">
+          <button class="btn-primary" id="open-restock-btn" onclick="openRestockModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Warehouse Restock (Simulate DB Sync)
+          </button>
+          <button class="btn-secondary" id="refresh-inventory-btn" onclick="loadWarehouseInventory()">
+            Refresh Inventory
+          </button>
+        </div>
+      </div>
+
+      <!-- Warehouse Items Table -->
+      <div class="warehouse-grid">
+        <div class="card-glass warehouse-card">
+          <h3 class="card-header-title">
+            <span>Warehouse Stock Allocation</span>
+            <span class="badge-tag">inventory.db (VM-4)</span>
+          </h3>
+          <div id="warehouse-items-container">
+            <div class="loading-state"><div class="spinner"></div></div>
+          </div>
+        </div>
+
+        <div class="card-glass warehouse-card">
+          <h3 class="card-header-title">
+            <span>Stock Ledger Audit Trail</span>
+            <span class="badge-tag">stock_ledger table</span>
+          </h3>
+          <div id="warehouse-ledger-container">
+            <div class="loading-state"><div class="spinner"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 4: CLOUD TOPOLOGY & LIVE DB SYNC MONITOR -->
+    <!-- ============================================== -->
+    <section class="view-section" id="view-topology">
+      <div class="section-heading-row">
+        <div>
+          <h2 class="section-title">Cloud Infrastructure & Cross-DB Synchronization Monitor</h2>
+          <p class="section-desc">Proof of 4 independent VMs, single public IP gateway, and distributed database synchronization.</p>
+        </div>
+        <div class="heading-actions">
+          <button class="btn-primary" id="btn-reconcile-all" onclick="triggerSystemReconcile()">
+            🔄 Force DB Reconciliation
+          </button>
+          <button class="btn-secondary" id="btn-test-firewall" onclick="testFirewallIsolation()">
+            🛡️ Verify VM Firewall Isolation
+          </button>
+        </div>
+      </div>
+
+      <!-- 4-VM Network Topology Diagram -->
+      <div class="card-glass topology-map-container" id="topology-map-card">
+        <div class="topology-header">
+          <div class="topology-title-group">
+            <span class="pulse-indicator"></span>
+            <h3>Distributed 4-VM Network Architecture Diagram</h3>
+          </div>
+          <div class="topology-legend">
+            <span class="legend-item"><span class="legend-dot public"></span> Public Internet Ingress</span>
+            <span class="legend-item"><span class="legend-dot private"></span> Private Subnet (10.128.0.0/20)</span>
+            <span class="legend-item"><span class="legend-dot sync"></span> Bidirectional DB Sync</span>
+          </div>
+        </div>
+
+        <div class="vm-nodes-grid" id="vm-nodes-grid">
+          <!-- Dynamically populated via loadTopology() -->
+        </div>
+
+        <div class="network-flow-infographic">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-text">
+              <strong>External Ingress:</strong> Public Client calls <code>http://PUBLIC_IP:3000</code>. Only VM-1 Gateway is exposed to <code>0.0.0.0/0</code>.
+            </div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-text">
+              <strong>Reverse Proxy Routing:</strong> Gateway proxies API requests over private subnet (<code>10.128.0.6</code>, <code>10.128.0.7</code>, <code>10.128.0.8</code>).
+            </div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-text">
+              <strong>Event-Driven DB Sync:</strong> Microservices push sync payloads directly to peer mini-DBs (<code>products.db</code>, <code>orders.db</code>, <code>inventory.db</code>).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Side-by-Side Databases Inspector -->
+      <div class="db-inspector-section">
+        <div class="section-subheading">
+          <h3>Live Cross-Database Inspector (Direct Multi-DB Snapshot)</h3>
+          <p>Real-time view of data records inside all 4 separate SQLite databases hosted across the VMs.</p>
+        </div>
+
+        <div class="db-inspector-tabs" id="db-inspector-tabs">
+          <button class="db-tab-btn active" onclick="switchDbTab('db-products')">
+            📦 VM-2: products.db
+          </button>
+          <button class="db-tab-btn" onclick="switchDbTab('db-orders')">
+            🛒 VM-3: orders.db
+          </button>
+          <button class="db-tab-btn" onclick="switchDbTab('db-inventory')">
+            🏭 VM-4: inventory.db
+          </button>
+          <button class="db-tab-btn" onclick="switchDbTab('db-gateway')">
+            🌐 VM-1: gateway.db
+          </button>
+        </div>
+
+        <div class="card-glass db-tab-content active" id="db-products">
+          <div class="db-table-header">
+            <h4><code>products.db</code> &bull; Product Catalog & Live Synced Available Stock</h4>
+            <span class="db-sync-badge">Synchronized with inventory.db</span>
+          </div>
+          <div id="inspector-products-content" class="table-scroll-wrap"></div>
+        </div>
+
+        <div class="card-glass db-tab-content" id="db-orders">
+          <div class="db-table-header">
+            <h4><code>orders.db</code> &bull; Customer Orders & Sync Event Ledger</h4>
+            <span class="db-sync-badge">Emits ORDER_CREATED events</span>
+          </div>
+          <div id="inspector-orders-content" class="table-scroll-wrap"></div>
+        </div>
+
+        <div class="card-glass db-tab-content" id="db-inventory">
+          <div class="db-table-header">
+            <h4><code>inventory.db</code> &bull; Warehouse Bins, Stock Ledger & Reorder Points</h4>
+            <span class="db-sync-badge">Emits STOCK_RESTOCKED events</span>
+          </div>
+          <div id="inspector-inventory-content" class="table-scroll-wrap"></div>
+        </div>
+
+        <div class="card-glass db-tab-content" id="db-gateway">
+          <div class="db-table-header">
+            <h4><code>gateway.db</code> &bull; Public Ingress Request Logs & Microservice Proxy Latency</h4>
+            <span class="db-sync-badge">Tracks public traffic routing</span>
+          </div>
+          <div id="inspector-gateway-content" class="table-scroll-wrap"></div>
+        </div>
+      </div>
+
+      <!-- Real-time Merged Sync Events Stream -->
+      <div class="card-glass sync-events-card">
+        <div class="sync-events-header">
+          <div class="title-with-badge">
+            <span class="pulse-indicator pulse-amber"></span>
+            <h3>Distributed Database Sync Event Feed</h3>
+            <span class="badge-tag" id="sync-stream-count">0 Synced Events</span>
+          </div>
+          <button class="btn-secondary btn-sm" onclick="loadSyncStream()">Refresh Feed</button>
+        </div>
+        <p class="sync-events-desc">
+          Auditable event stream demonstrating cross-database replication between <code>orders.db</code>, <code>products.db</code>, and <code>inventory.db</code> using distributed transaction event IDs.
+        </p>
+        <div class="sync-events-feed" id="sync-events-feed">
+          <div class="loading-state"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL 1: SHOPPING CART & CHECKOUT DRAWER -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="cart-drawer-modal" onclick="handleBackdropClick(event, 'cart-drawer-modal')">
+    <div class="cart-drawer-card">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="drawer-icon">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          <h3>Shopping Cart</h3>
+        </div>
+        <button class="btn-close-modal" id="close-cart-btn" onclick="toggleCartModal(false)">&times;</button>
+      </div>
+
+      <!-- Cart Items List -->
+      <div class="drawer-body" id="cart-items-body">
+        <div class="cart-items-container" id="cart-items-list">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Checkout Form -->
+        <div class="checkout-form-section" id="checkout-form-section">
+          <div class="checkout-section-divider">
+            <span>Customer Delivery Details</span>
+          </div>
+          <form id="checkout-form" onsubmit="submitOrder(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cust-name">Full Name</label>
+                <input type="text" id="cust-name" class="form-input" required placeholder="Alex Mercer" value="Alex Mercer">
+              </div>
+              <div class="form-group">
+                <label for="cust-email">Email Address</label>
+                <input type="email" id="cust-email" class="form-input" required placeholder="alex@quantum.io" value="alex@quantum.io">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cust-address">Shipping Address</label>
+              <input type="text" id="cust-address" class="form-input" required placeholder="101 Silicon Valley Way, Suite 400" value="101 Silicon Valley Way, Suite 400">
+            </div>
+
+            <div class="cart-summary-block">
+              <div class="summary-line">
+                <span>Subtotal</span>
+                <span id="summary-subtotal">$0.00</span>
+              </div>
+              <div class="summary-line">
+                <span>Cloud Tax & Packaging</span>
+                <span id="summary-tax">$0.00</span>
+              </div>
+              <div class="summary-line total-line">
+                <span>Total Amount</span>
+                <span class="gradient-text" id="summary-total">$0.00</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-checkout" id="submit-order-btn">
+              <span class="btn-text">Place Order & Trigger Multi-DB Sync</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 2: LIVE MULTI-DB SYNC PROGRESS STEPPER -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="sync-stepper-modal">
+    <div class="sync-stepper-card card-glass">
+      <div class="stepper-header">
+        <span class="stepper-pill">Live Distributed Transaction</span>
+        <h3 id="stepper-order-number">Processing Order...</h3>
+        <p class="stepper-sub">Watch the request travel through Gateway and replicate across databases.</p>
+      </div>
+
+      <div class="stepper-track">
+        <div class="step-item" id="step-1">
+          <div class="step-circle"><span class="step-icon">1</span></div>
+          <div class="step-info">
+            <strong>VM-1: API Gateway (Public)</strong>
+            <span>Receives external order request & logs to <code>gateway.db</code></span>
+          </div>
+        </div>
+        <div class="step-item" id="step-2">
+          <div class="step-circle"><span class="step-icon">2</span></div>
+          <div class="step-info">
+            <strong>VM-3: Order Service (Private)</strong>
+            <span>Inserts order & generates distributed event in <code>orders.db</code></span>
+          </div>
+        </div>
+        <div class="step-item" id="step-3">
+          <div class="step-circle"><span class="step-icon">3</span></div>
+          <div class="step-info">
+            <strong>VM-4: Inventory Service (Private)</strong>
+            <span>Allocates warehouse stock & writes audit trail to <code>inventory.db</code></span>
+          </div>
+        </div>
+        <div class="step-item" id="step-4">
+          <div class="step-circle"><span class="step-icon">4</span></div>
+          <div class="step-info">
+            <strong>VM-2: Product Catalog (Private)</strong>
+            <span>Deducts live catalog stock & updates <code>products.db</code></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stepper-footer" id="stepper-footer" style="display: none;">
+        <div class="sync-success-badge">
+          ✓ All 4 Microservices & Mini-Databases 100% Synchronized
+        </div>
+        <button class="btn-primary" onclick="closeSyncModalAndInspect()">
+          Inspect Live DB Records
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 3: WAREHOUSE RESTOCK TOOL -->
+  <!-- ============================================== -->
+  <div class="modal-backdrop" id="restock-modal" onclick="handleBackdropClick(event, 'restock-modal')">
+    <div class="restock-card card-glass">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <span class="pulse-indicator pulse-emerald"></span>
+          <h3>Warehouse Restock Simulator</h3>
+        </div>
+        <button class="btn-close-modal" onclick="toggleRestockModal(false)">&times;</button>
+      </div>
+      <p class="modal-intro">
+        Restocking adds quantity to <strong>VM-4 (<code>inventory.db</code>)</strong> and automatically broadcasts a <code>STOCK_RESTOCKED</code> sync event to update <strong>VM-2 (<code>products.db</code>)</strong> live!
+      </p>
+
+      <form id="restock-form" onsubmit="submitRestock(event)">
+        <div class="form-group">
+          <label for="restock-sku">Select Warehouse SKU</label>
+          <select id="restock-sku" class="form-input" required>
+            <!-- dynamically populated -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="restock-qty">Units to Restock</label>
+          <input type="number" id="restock-qty" class="form-input" min="1" max="500" value="10" required>
+        </div>
+        <div class="form-group">
+          <label for="restock-note">Restock Batch Reference / Note</label>
+          <input type="text" id="restock-note" class="form-input" value="Shipment Batch #QC-2026-X">
+        </div>
+        <button type="submit" class="btn-primary" id="btn-submit-restock" style="width: 100%; margin-top: 1rem;">
+          Dispatch Restock & Broadcast Sync
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "ecommerce-order-service",
+  "version": "1.0.0",
+  "description": "Order Processing Microservice with orders.db (VM 3)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5"
+  }
+}

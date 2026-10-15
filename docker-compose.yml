@@ -1,0 +1,118 @@
+services:
+  # ====================================================================
+  # VM 1: API Gateway & Frontend (Public Entrypoint)
+  # ONLY container exposed to host/external network (Port 3000)
+  # GCP Internal IP: 10.128.0.5
+  # ====================================================================
+  gateway:
+    build: .
+    container_name: vm1_gateway
+    command: ["node", "gateway/src/server.js"]
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - VM_NAME=VM-1 (Public Gateway)
+      - PUBLIC_IP=0.0.0.0
+      - PRIVATE_IP=10.128.0.5
+      - PRODUCT_SERVICE_URL=http://product-service:4001
+      - ORDER_SERVICE_URL=http://order-service:4002
+      - INVENTORY_SERVICE_URL=http://inventory-service:4003
+      - PRODUCT_VM_IP=10.128.0.6
+      - ORDER_VM_IP=10.128.0.7
+      - INVENTORY_VM_IP=10.128.0.8
+    volumes:
+      - gateway_db_data:/app/gateway/data
+    networks:
+      cloud_internal:
+        ipv4_address: 10.128.0.5
+    depends_on:
+      - product-service
+      - order-service
+      - inventory-service
+    restart: unless-stopped
+
+  # ====================================================================
+  # VM 2: Product Catalog Microservice (Private Subnet)
+  # NO HOST PORTS EXPOSED - Accessible only via 10.128.0.0/20
+  # GCP Internal IP: 10.128.0.6
+  # ====================================================================
+  product-service:
+    build: .
+    container_name: vm2_product_service
+    command: ["node", "product-service/src/server.js"]
+    expose:
+      - "4001"
+    environment:
+      - PORT=4001
+      - VM_NAME=VM-2 (Product Catalog)
+      - PRIVATE_IP=10.128.0.6
+      - ORDER_SERVICE_URL=http://order-service:4002
+      - INVENTORY_SERVICE_URL=http://inventory-service:4003
+    volumes:
+      - product_db_data:/app/product-service/data
+    networks:
+      cloud_internal:
+        ipv4_address: 10.128.0.6
+    restart: unless-stopped
+
+  # ====================================================================
+  # VM 3: Order Processing Microservice (Private Subnet)
+  # NO HOST PORTS EXPOSED - Accessible only via 10.128.0.0/20
+  # GCP Internal IP: 10.128.0.7
+  # ====================================================================
+  order-service:
+    build: .
+    container_name: vm3_order_service
+    command: ["node", "order-service/src/server.js"]
+    expose:
+      - "4002"
+    environment:
+      - PORT=4002
+      - VM_NAME=VM-3 (Order Service)
+      - PRIVATE_IP=10.128.0.7
+      - PRODUCT_SERVICE_URL=http://product-service:4001
+      - INVENTORY_SERVICE_URL=http://inventory-service:4003
+    volumes:
+      - order_db_data:/app/order-service/data
+    networks:
+      cloud_internal:
+        ipv4_address: 10.128.0.7
+    restart: unless-stopped
+
+  # ====================================================================
+  # VM 4: Inventory & Warehouse Microservice (Private Subnet)
+  # NO HOST PORTS EXPOSED - Accessible only via 10.128.0.0/20
+  # GCP Internal IP: 10.128.0.8
+  # ====================================================================
+  inventory-service:
+    build: .
+    container_name: vm4_inventory_service
+    command: ["node", "inventory-service/src/server.js"]
+    expose:
+      - "4003"
+    environment:
+      - PORT=4003
+      - VM_NAME=VM-4 (Inventory Service)
+      - PRIVATE_IP=10.128.0.8
+      - PRODUCT_SERVICE_URL=http://product-service:4001
+      - ORDER_SERVICE_URL=http://order-service:4002
+    volumes:
+      - inventory_db_data:/app/inventory-service/data
+    networks:
+      cloud_internal:
+        ipv4_address: 10.128.0.8
+    restart: unless-stopped
+
+networks:
+  cloud_internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.128.0.0/24
+
+volumes:
+  gateway_db_data:
+  product_db_data:
+  order_db_data:
+  inventory_db_data:

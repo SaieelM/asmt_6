@@ -1,0 +1,27 @@
+{
+  "name": "cloud-ecommerce-microservices",
+  "version": "1.0.0",
+  "description": "Distributed 4-Microservice E-Commerce System with Multi-VM Deployment & Cross-Database Sync",
+  "main": "run-all.js",
+  "scripts": {
+    "start": "node run-all.js",
+    "start:all": "node run-all.js",
+    "start:gateway": "node gateway/src/server.js",
+    "start:product": "node product-service/src/server.js",
+    "start:order": "node order-service/src/server.js",
+    "start:inventory": "node inventory-service/src/server.js"
+  },
+  "keywords": [
+    "microservices",
+    "cloud-computing",
+    "distributed-systems",
+    "database-synchronization",
+    "api-gateway"
+  ],
+  "author": "Cloud Computing Assignment 6",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
